@@ -14,6 +14,14 @@ import androidx.compose.ui.unit.Constraints
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+/**
+ * Define a VerticalNestedScrollView.
+ *
+ * @param state the state object to be used to observe the [VerticalNestedScrollView] state.
+ * @param modifier the modifier to apply to this layout.
+ * @param content a block which describes the header.
+ * @param content a block which describes the content.
+ */
 @Composable
 fun VerticalNestedScrollView(
     modifier: Modifier = Modifier,

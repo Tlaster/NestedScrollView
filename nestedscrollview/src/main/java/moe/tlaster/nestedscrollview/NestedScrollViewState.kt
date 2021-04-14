@@ -1,5 +1,6 @@
 package moe.tlaster.nestedscrollview
 
+import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.runtime.*
@@ -12,8 +13,12 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 import kotlin.math.withSign
 
+/**
+ * Create a [NestedScrollViewState] that is remembered across compositions.
+ */
 @Composable
 fun rememberNestedScrollViewState(): NestedScrollViewState {
     val scope = rememberCoroutineScope()
@@ -27,6 +32,11 @@ fun rememberNestedScrollViewState(): NestedScrollViewState {
     }
 }
 
+/**
+ * A state object that can be hoisted to observe scale and translate for [NestedScrollView].
+ *
+ * In most cases, this will be created via [rememberNestedScrollViewState].
+ */
 @Stable
 class NestedScrollViewState(
     private val scope: CoroutineScope,
@@ -38,7 +48,7 @@ class NestedScrollViewState(
             scope: CoroutineScope,
         ): Saver<NestedScrollViewState, *> = listSaver(
             save = {
-                listOf(it.offset, it.maxOffset)
+                listOf(it.offset, it._maxOffset.value)
             },
             restore = {
                 NestedScrollViewState(
@@ -50,9 +60,17 @@ class NestedScrollViewState(
         )
     }
 
-    private var changes = 0f
+    /**
+     * The maximum value for [NestedScrollView] Content to translate
+     */
+    @get:FloatRange(from = 0.0)
     val maxOffset: Float
-        get() = _maxOffset.value
+        get() = _maxOffset.value.absoluteValue
+
+    /**
+     * The current value for [NestedScrollView] Content translate
+     */
+    @get:FloatRange(from = 0.0)
     val offset: Float
         get() = _offset.value
 
@@ -86,6 +104,7 @@ class NestedScrollViewState(
         }
     }
 
+    private var changes = 0f
     private var _offset = Animatable(initialOffset)
     private val _maxOffset = mutableStateOf(initialMaxOffset)
     internal val headerState = NestedScrollViewHeaderState()
