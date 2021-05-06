@@ -48,8 +48,8 @@ android {
 dependencies {
     implementation(project(":nestedscrollview"))
     implementation("androidx.core:core-ktx:1.3.2")
-    implementation("com.google.accompanist:accompanist-pager:0.8.0")
-    implementation("com.google.accompanist:accompanist-pager-indicators:0.8.0")
+    implementation("com.google.accompanist:accompanist-pager:0.9.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.9.0")
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("com.google.android.material:material:1.3.0")
     implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")

@@ -1,6 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    val compose_version by extra("1.0.0-beta05")
+    val compose_version by extra("1.0.0-beta06")
     repositories {
         google()
         mavenCentral()
