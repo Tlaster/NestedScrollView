@@ -23,7 +23,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
-        useIR = true
     }
 }
 
@@ -40,7 +39,7 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 groupId = "moe.tlaster"
                 artifactId = "nestedscrollview"
-                version = "0.5.0"
+                version = "0.5.1"
 
                 from(components["release"])
             }

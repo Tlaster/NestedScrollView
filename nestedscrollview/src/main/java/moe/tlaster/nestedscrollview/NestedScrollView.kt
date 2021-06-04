@@ -1,14 +1,13 @@
 package moe.tlaster.nestedscrollview
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.consumePositionChange
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
 import kotlinx.coroutines.launch
@@ -67,7 +66,7 @@ private fun NestedScrollView(
     Layout(
         modifier = modifier
             .pointerInput(Unit) {
-                detectDragGestures(
+                detectDrag(
                     onDrag = { change, dragAmount ->
                         val amount = when (orientation) {
                             Orientation.Vertical -> dragAmount.y
@@ -131,6 +130,35 @@ private fun NestedScrollView(
                         state.offset.roundToInt() + headerPlaceable.width,
                         0,
                     )
+                }
+            }
+        }
+    }
+}
+
+private suspend fun PointerInputScope.detectDrag(
+    onDragStart: (Offset) -> Unit = { },
+    onDragEnd: () -> Unit = { },
+    onDragCancel: () -> Unit = { },
+    onDrag: (change: PointerInputChange, dragAmount: Offset) -> Unit
+) {
+    forEachGesture {
+        awaitPointerEventScope {
+            val down = awaitFirstDown(requireUnconsumed = false)
+            var drag: PointerInputChange?
+            do {
+                drag = awaitTouchSlopOrCancellation(down.id, onDrag)
+            } while (drag != null && !drag.positionChangeConsumed())
+            if (drag != null) {
+                onDragStart.invoke(drag.position)
+                if (
+                    !drag(drag.id) {
+                        onDrag(it, it.positionChange())
+                    }
+                ) {
+                    onDragCancel()
+                } else {
+                    onDragEnd()
                 }
             }
         }
