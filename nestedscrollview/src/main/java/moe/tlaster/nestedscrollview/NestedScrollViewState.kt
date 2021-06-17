@@ -107,7 +107,6 @@ class NestedScrollViewState(
     private var changes = 0f
     private var _offset = Animatable(initialOffset)
     private val _maxOffset = mutableStateOf(initialMaxOffset)
-    internal val headerState = NestedScrollViewHeaderState()
 
     private suspend fun snapTo(value: Float) {
         _offset.snapTo(value)

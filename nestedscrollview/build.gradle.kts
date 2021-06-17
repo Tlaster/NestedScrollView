@@ -39,7 +39,7 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 groupId = "moe.tlaster"
                 artifactId = "nestedscrollview"
-                version = "0.5.1"
+                version = "0.6.0"
 
                 from(components["release"])
             }

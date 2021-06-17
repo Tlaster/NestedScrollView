@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
- * Define a VerticalNestedScrollView.
+ * Define a [VerticalNestedScrollView].
  *
  * @param state the state object to be used to observe the [VerticalNestedScrollView] state.
  * @param modifier the modifier to apply to this layout.
@@ -37,9 +37,16 @@ fun VerticalNestedScrollView(
     )
 }
 
-// TODO
+/**
+ * Define a [HorizontalNestedScrollView].
+ *
+ * @param state the state object to be used to observe the [HorizontalNestedScrollView] state.
+ * @param modifier the modifier to apply to this layout.
+ * @param content a block which describes the header.
+ * @param content a block which describes the content.
+ */
 @Composable
-private fun HorizontalNestedScrollView(
+fun HorizontalNestedScrollView(
     modifier: Modifier = Modifier,
     state: NestedScrollViewState,
     header: @Composable () -> Unit = {},
@@ -62,39 +69,14 @@ private fun NestedScrollView(
     header: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
     Layout(
         modifier = modifier
-            .pointerInput(Unit) {
-                detectDrag(
-                    onDrag = { change, dragAmount ->
-                        val amount = when (orientation) {
-                            Orientation.Vertical -> dragAmount.y
-                            Orientation.Horizontal -> dragAmount.x
-                        }
-                        if (state.drag(amount) != 0f) {
-                            change.consumePositionChange()
-                            state.headerState.addPosition(
-                                change.uptimeMillis,
-                                change.position,
-                            )
-                        }
-                    },
-                    onDragEnd = {
-                        scope.launch {
-                            val velocity = state.headerState.dragEnd()
-                            val flingVelocity = when (orientation) {
-                                Orientation.Vertical -> velocity.y
-                                Orientation.Horizontal -> velocity.x
-                            }
-                            state.fling(flingVelocity)
-                        }
-                    },
-                    onDragCancel = {
-                        state.headerState.resetTracking()
-                    }
-                )
-            }
+            .scrollable(
+                orientation = orientation,
+                state = rememberScrollableState {
+                    state.drag(it)
+                }
+            )
             .nestedScroll(state.nestedScrollConnectionHolder),
         content = {
             Box {
@@ -130,35 +112,6 @@ private fun NestedScrollView(
                         state.offset.roundToInt() + headerPlaceable.width,
                         0,
                     )
-                }
-            }
-        }
-    }
-}
-
-private suspend fun PointerInputScope.detectDrag(
-    onDragStart: (Offset) -> Unit = { },
-    onDragEnd: () -> Unit = { },
-    onDragCancel: () -> Unit = { },
-    onDrag: (change: PointerInputChange, dragAmount: Offset) -> Unit
-) {
-    forEachGesture {
-        awaitPointerEventScope {
-            val down = awaitFirstDown(requireUnconsumed = false)
-            var drag: PointerInputChange?
-            do {
-                drag = awaitTouchSlopOrCancellation(down.id, onDrag)
-            } while (drag != null && !drag.positionChangeConsumed())
-            if (drag != null) {
-                onDragStart.invoke(drag.position)
-                if (
-                    !drag(drag.id) {
-                        onDrag(it, it.positionChange())
-                    }
-                ) {
-                    onDragCancel()
-                } else {
-                    onDragEnd()
                 }
             }
         }
