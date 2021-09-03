@@ -136,7 +136,7 @@ class NestedScrollViewState(
 
     internal fun drag(delta: Float): Float {
         return if (delta < 0 && offset > _maxOffset.value || delta > 0 && offset < 0f) {
-            changes += delta
+            changes = delta
             scope.launch {
                 snapTo((offset + delta).coerceIn(_maxOffset.value, 0f))
             }
