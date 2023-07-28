@@ -1,16 +1,14 @@
 package moe.tlaster.nestedscrollview
 
-import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -23,8 +21,8 @@ import kotlin.math.roundToInt
  */
 @Composable
 fun VerticalNestedScrollView(
-    modifier: Modifier = Modifier,
     state: NestedScrollViewState,
+    modifier: Modifier = Modifier,
     header: @Composable () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
@@ -37,45 +35,23 @@ fun VerticalNestedScrollView(
     )
 }
 
-/**
- * Define a [HorizontalNestedScrollView].
- *
- * @param state the state object to be used to observe the [HorizontalNestedScrollView] state.
- * @param modifier the modifier to apply to this layout.
- * @param content a block which describes the header.
- * @param content a block which describes the content.
- */
-@Composable
-fun HorizontalNestedScrollView(
-    modifier: Modifier = Modifier,
-    state: NestedScrollViewState,
-    header: @Composable () -> Unit = {},
-    content: @Composable () -> Unit = {},
-) {
-    NestedScrollView(
-        modifier = modifier,
-        state = state,
-        orientation = Orientation.Horizontal,
-        header = header,
-        content = content,
-    )
-}
-
 @Composable
 private fun NestedScrollView(
-    modifier: Modifier = Modifier,
     state: NestedScrollViewState,
     orientation: Orientation,
     header: @Composable () -> Unit,
     content: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Layout(
         modifier = modifier
             .scrollable(
                 orientation = orientation,
-                state = rememberScrollableState {
-                    state.drag(it)
-                }
+                state = rememberScrollableState { delta ->
+                    val initialOffset = state.offset
+                    state.offset += delta
+                    state.offset - initialOffset
+                },
             )
             .nestedScroll(state.nestedScrollConnectionHolder),
         content = {
@@ -98,7 +74,7 @@ private fun NestedScrollView(
                         measurables[1].measure(constraints.copy(maxHeight = constraints.maxHeight))
                     contentPlaceable.place(
                         0,
-                        state.offset.roundToInt() + headerPlaceable.height
+                        state.offset.roundToInt() + headerPlaceable.height,
                     )
                 }
                 Orientation.Horizontal -> {

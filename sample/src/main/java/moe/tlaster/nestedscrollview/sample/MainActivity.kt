@@ -49,6 +49,7 @@ fun App() {
             val scope = rememberCoroutineScope()
             val nestedScrollViewState = rememberNestedScrollViewState()
             VerticalNestedScrollView(
+                modifier = Modifier.padding(it),
                 state = nestedScrollViewState,
                 header = {
                     Surface(

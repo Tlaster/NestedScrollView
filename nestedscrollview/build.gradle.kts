@@ -5,8 +5,8 @@ plugins {
 }
 
 android {
-    compileSdk = 30
-
+    compileSdk = 33
+    namespace = "moe.tlaster.nestedscrollview"
     defaultConfig {
         minSdk = 21
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

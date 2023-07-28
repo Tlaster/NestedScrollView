@@ -4,13 +4,14 @@ plugins {
 }
 
 android {
-    compileSdk = 30
+    compileSdk = 33
     buildToolsVersion = "30.0.3"
 
     defaultConfig {
         applicationId = "moe.tlaster.nestedscrollview.sample"
+        namespace = "moe.tlaster.nestedscrollview"
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
