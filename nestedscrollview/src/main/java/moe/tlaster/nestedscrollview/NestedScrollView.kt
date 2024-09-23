@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
 /**
@@ -23,6 +25,7 @@ import kotlin.math.roundToInt
 fun VerticalNestedScrollView(
     state: NestedScrollViewState,
     modifier: Modifier = Modifier,
+    contentTopPadding: Dp = 0.dp,
     header: @Composable () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
@@ -32,6 +35,7 @@ fun VerticalNestedScrollView(
         orientation = Orientation.Vertical,
         header = header,
         content = content,
+        contentTopPadding = contentTopPadding,
     )
 }
 
@@ -41,6 +45,7 @@ private fun NestedScrollView(
     orientation: Orientation,
     header: @Composable () -> Unit,
     content: @Composable () -> Unit,
+    contentTopPadding: Dp,
     modifier: Modifier = Modifier,
 ) {
     Layout(
@@ -69,9 +74,9 @@ private fun NestedScrollView(
                     val headerPlaceable =
                         measurables[0].measure(constraints.copy(maxHeight = Constraints.Infinity))
                     headerPlaceable.place(0, state.offset.roundToInt())
-                    state.updateBounds(-(headerPlaceable.height.toFloat()))
+                    state.updateBounds(-(headerPlaceable.height.toFloat()) + contentTopPadding.toPx())
                     val contentPlaceable =
-                        measurables[1].measure(constraints.copy(maxHeight = constraints.maxHeight))
+                        measurables[1].measure(constraints.copy(maxHeight = constraints.maxHeight - contentTopPadding.roundToPx()))
                     contentPlaceable.place(
                         0,
                         state.offset.roundToInt() + headerPlaceable.height,

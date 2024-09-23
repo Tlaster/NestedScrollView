@@ -51,6 +51,7 @@ fun App() {
             VerticalNestedScrollView(
                 modifier = Modifier.padding(it),
                 state = nestedScrollViewState,
+                contentTopPadding = 56.dp,
                 header = {
                     Surface(
                         modifier = Modifier
