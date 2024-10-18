@@ -74,7 +74,8 @@ private fun NestedScrollView(
                     val headerPlaceable =
                         measurables[0].measure(constraints.copy(maxHeight = Constraints.Infinity))
                     headerPlaceable.place(0, state.offset.roundToInt())
-                    state.updateBounds(-(headerPlaceable.height.toFloat()) + contentTopPadding.toPx())
+                    val bounds = -(headerPlaceable.height.toFloat()) + contentTopPadding.toPx()
+                    state.updateBounds(bounds.coerceAtMost(0f))
                     val contentPlaceable =
                         measurables[1].measure(constraints.copy(maxHeight = constraints.maxHeight - contentTopPadding.roundToPx()))
                     contentPlaceable.place(
